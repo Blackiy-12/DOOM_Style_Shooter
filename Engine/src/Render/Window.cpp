@@ -22,3 +22,12 @@ Window::~Window()
 
 	ENGINE_INFO("Window destroyed");
 }
+
+void Window::createSurface(VkSurfaceKHR* WindowSurface, VkInstance Instance)
+{
+	if (SDL_Vulkan_CreateSurface(WindowPtr, Instance, WindowSurface) == false)
+	{
+		ENGINE_ERROR("SDL can't create surface");
+		exit(-1);
+	}
+}

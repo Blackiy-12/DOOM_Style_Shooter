@@ -5,7 +5,6 @@
 
 #include <SDL2/SDL_vulkan.h>
 
-#include <vector>
 #include <map>
 
 const std::vector<const char*> ValidationLayers = { "VK_LAYER_KHRONOS_validation" };
@@ -51,6 +50,7 @@ Device::Device(Window* Window)
     setupDebugMessenger();
     pickPhysicalDevice();
     createLogicalDevice();
+    setupSurface();
 }
 
 Device::~Device()
@@ -289,6 +289,13 @@ void Device::createLogicalDevice()
     vkGetDeviceQueue(LogicalDevice, Indices.GraphicsFamily.value(), 0, &GraphicQueue);
 
     ENGINE_INFO("Create Logical Device: finished");
+}
+
+void Device::setupSurface()
+{
+    this->WindowPtr->createSurface(&WindowSurface, Instance);
+
+    ENGINE_INFO("Window surface created");
 }
 
 QueueFamilyIndices findQueueFamilies(VkPhysicalDevice Device) 

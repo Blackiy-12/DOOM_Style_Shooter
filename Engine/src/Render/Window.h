@@ -2,6 +2,8 @@
 
 #include "../Core.h"
 
+#include <vulkan/vulkan.h>
+
 #include <string>
 
 struct SDL_Window;
@@ -18,12 +20,13 @@ public:
 public:
 	std::string getWindowName() { return WindowName; }
 
+	void createSurface(VkSurfaceKHR* WindowSurface, VkInstance Instance);
+
 private:
 
 	SDL_Window* WindowPtr;
 
 	std::string WindowName;
-
 
 private:
 	friend class Device;

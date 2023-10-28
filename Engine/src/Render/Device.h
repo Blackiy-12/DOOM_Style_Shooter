@@ -4,7 +4,16 @@
 
 #include <vulkan/vulkan.h>
 
+#include <vector>
+
 class Window;
+
+struct SwapChainSupportDetails 
+{
+	VkSurfaceCapabilitiesKHR Capabilities;
+	std::vector<VkSurfaceFormatKHR> Formats;
+	std::vector<VkPresentModeKHR> PresentModes;
+};
 
 class ENGINE_API Device
 {
@@ -35,6 +44,8 @@ private:
 	int rateDeviceSuitability(VkPhysicalDevice Device);
 
 	void createLogicalDevice();
+	
+	void setupSurface();
 
 private:
 
@@ -47,6 +58,8 @@ private:
 	VkDebugUtilsMessengerEXT DebugMessenger;
 
 	VkQueue GraphicQueue;
+
+	VkSurfaceKHR WindowSurface;
 
 	Window* WindowPtr;
 
