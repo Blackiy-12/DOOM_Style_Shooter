@@ -2,6 +2,7 @@
 
 Engine::Engine()
 {
+	RenderPtr = std::make_unique<Render>();
 }
 
 Engine::~Engine()
