@@ -2,7 +2,7 @@
 
 #include "../Core.h"
 #include "Window.h"
-
+#include "Device.h"
 
 #include <memory>
 
@@ -18,5 +18,6 @@ public:
 private:
 	std::unique_ptr<Window> WindowPtr;
 
+	std::unique_ptr<Device> DevicePtr;
 };
 
