@@ -5,19 +5,9 @@
 
 #include <SDL2/SDL_vulkan.h>
 
-#include <map>
+#include <set>
 
 const std::vector<const char*> ValidationLayers = { "VK_LAYER_KHRONOS_validation" };
-
-struct QueueFamilyIndices 
-{
-    std::optional<uint32_t> GraphicsFamily;
-
-    inline bool isComplete() { return GraphicsFamily.has_value(); }
-};
-
-QueueFamilyIndices findQueueFamilies(VkPhysicalDevice Device);
-
 
 VkResult createDebugUtilsMessengerEXT(  VkInstance Instance, 
                                         const VkDebugUtilsMessengerCreateInfoEXT* CreateInfoPtr,
@@ -48,9 +38,9 @@ Device::Device(Window* Window)
 {
     createInstance();
     setupDebugMessenger();
+    setupSurface();
     pickPhysicalDevice();
     createLogicalDevice();
-    setupSurface();
 }
 
 Device::~Device()
@@ -252,19 +242,26 @@ void Device::createLogicalDevice()
     ENGINE_INFO("Create Logical Device: start");
     QueueFamilyIndices Indices = findQueueFamilies(GPU);
 
-    VkDeviceQueueCreateInfo QueueCreateInfo{};
-    QueueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-    QueueCreateInfo.queueFamilyIndex = Indices.GraphicsFamily.value();
-    QueueCreateInfo.queueCount = 1;
+    std::vector<VkDeviceQueueCreateInfo> QueueCreateInfos;
+    std::set<uint32_t> uniqueQueueFamilies = { Indices.GraphicsFamily.value(), Indices.PresentFamily.value() };
 
-    float QueuePriority = 1.0f;
-    QueueCreateInfo.pQueuePriorities = &QueuePriority;
+    float queuePriority = 1.0f;
+    for (uint32_t queueFamily : uniqueQueueFamilies) 
+    {
+        VkDeviceQueueCreateInfo QueueCreateInfo{};
+        QueueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+        QueueCreateInfo.queueFamilyIndex = queueFamily;
+        QueueCreateInfo.queueCount = 1;
+        QueueCreateInfo.pQueuePriorities = &queuePriority;
+        QueueCreateInfos.push_back(QueueCreateInfo);
+    }
 
     VkPhysicalDeviceFeatures DeviceFeatures{};
 
     VkDeviceCreateInfo CreateInfo{};
     CreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
-    CreateInfo.pQueueCreateInfos = &QueueCreateInfo;
+    CreateInfo.queueCreateInfoCount = static_cast<uint32_t>(QueueCreateInfos.size());
+    CreateInfo.pQueueCreateInfos = QueueCreateInfos.data();
     CreateInfo.queueCreateInfoCount = 1;
     CreateInfo.pEnabledFeatures = &DeviceFeatures;
 
@@ -287,6 +284,7 @@ void Device::createLogicalDevice()
     }
 
     vkGetDeviceQueue(LogicalDevice, Indices.GraphicsFamily.value(), 0, &GraphicQueue);
+    vkGetDeviceQueue(LogicalDevice, Indices.PresentFamily.value(), 0, &PresentQueue);
 
     ENGINE_INFO("Create Logical Device: finished");
 }
@@ -298,7 +296,7 @@ void Device::setupSurface()
     ENGINE_INFO("Window surface created");
 }
 
-QueueFamilyIndices findQueueFamilies(VkPhysicalDevice Device) 
+Device::QueueFamilyIndices Device::findQueueFamilies(VkPhysicalDevice Device) 
 {
     QueueFamilyIndices Indices;
 
@@ -313,6 +311,12 @@ QueueFamilyIndices findQueueFamilies(VkPhysicalDevice Device)
     {
         if (QueueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT)
             Indices.GraphicsFamily = i;
+
+
+        VkBool32 presentSupport = false;
+        vkGetPhysicalDeviceSurfaceSupportKHR(Device, i, WindowSurface, &presentSupport);
+
+        if (presentSupport) Indices.PresentFamily = i;
 
         if (Indices.isComplete()) break;
 

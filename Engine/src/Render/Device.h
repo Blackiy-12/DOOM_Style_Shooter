@@ -5,6 +5,8 @@
 #include <vulkan/vulkan.h>
 
 #include <vector>
+#include <map>
+#include <optional>
 
 class Window;
 
@@ -14,6 +16,8 @@ struct SwapChainSupportDetails
 	std::vector<VkSurfaceFormatKHR> Formats;
 	std::vector<VkPresentModeKHR> PresentModes;
 };
+
+class Window;
 
 class ENGINE_API Device
 {
@@ -49,6 +53,19 @@ private:
 
 private:
 
+	struct QueueFamilyIndices
+	{
+		std::optional<uint32_t> GraphicsFamily;
+		std::optional<uint32_t> PresentFamily;
+
+		inline bool isComplete() { return GraphicsFamily.has_value(); }
+	};
+
+	QueueFamilyIndices findQueueFamilies(VkPhysicalDevice Device);
+
+
+private:
+
 	VkPhysicalDevice GPU = VK_NULL_HANDLE;
 
 	VkDevice LogicalDevice;
@@ -58,6 +75,8 @@ private:
 	VkDebugUtilsMessengerEXT DebugMessenger;
 
 	VkQueue GraphicQueue;
+	
+	VkQueue PresentQueue;
 
 	VkSurfaceKHR WindowSurface;
 

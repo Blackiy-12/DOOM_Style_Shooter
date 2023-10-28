@@ -18,7 +18,7 @@ public:
 	~Window();
 
 public:
-	std::string getWindowName() { return WindowName; }
+	std::string getWindowName() { return WindowName; };
 
 	void createSurface(VkSurfaceKHR* WindowSurface, VkInstance Instance);
 
