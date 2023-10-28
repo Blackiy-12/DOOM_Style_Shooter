@@ -10,6 +10,8 @@ struct SDL_Window;
 
 class Device;
 
+class SwapChain;
+
 class ENGINE_API Window
 {
 public:
@@ -30,5 +32,6 @@ private:
 
 private:
 	friend class Device;
+	friend class SwapChain;
 };
 

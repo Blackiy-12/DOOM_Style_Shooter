@@ -3,6 +3,7 @@
 #include "../Core.h"
 #include "Window.h"
 #include "Device.h"
+#include "SwapChain.h"
 
 #include <memory>
 
@@ -19,5 +20,7 @@ private:
 	std::unique_ptr<Window> WindowPtr;
 
 	std::unique_ptr<Device> DevicePtr;
+
+	std::unique_ptr<SwapChain> SwapChainPtr;
 };
 

@@ -9,6 +9,8 @@
 
 const std::vector<const char*> ValidationLayers = { "VK_LAYER_KHRONOS_validation" };
 
+const std::vector<const char*> DeviceExtensions = { VK_KHR_SWAPCHAIN_EXTENSION_NAME };
+
 VkResult createDebugUtilsMessengerEXT(  VkInstance Instance, 
                                         const VkDebugUtilsMessengerCreateInfoEXT* CreateInfoPtr,
                                         const VkAllocationCallbacks* AllocatorPtr, 
@@ -265,7 +267,8 @@ void Device::createLogicalDevice()
     CreateInfo.queueCreateInfoCount = 1;
     CreateInfo.pEnabledFeatures = &DeviceFeatures;
 
-    CreateInfo.enabledExtensionCount = 0;
+    CreateInfo.enabledExtensionCount = static_cast<uint32_t>(DeviceExtensions.size());
+    CreateInfo.ppEnabledExtensionNames = DeviceExtensions.data();
 
     if (EnableValidationLayers) 
     {

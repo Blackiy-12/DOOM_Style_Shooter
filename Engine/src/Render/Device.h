@@ -10,6 +10,9 @@
 
 class Window;
 
+class SwapChain;
+
+
 struct SwapChainSupportDetails 
 {
 	VkSurfaceCapabilitiesKHR Capabilities;
@@ -25,6 +28,7 @@ public:
 	Device(Window* Window);
 	
 	~Device();
+
 
 private:
 
@@ -82,7 +86,10 @@ private:
 
 	Window* WindowPtr;
 
+
 private:
 	static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity, VkDebugUtilsMessageTypeFlagsEXT messageType, const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData, void* pUserData);
+
+	friend class SwapChain;
 };
 
