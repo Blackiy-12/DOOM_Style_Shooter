@@ -106,7 +106,8 @@ project "Engine"
         {
             "Logger",			
 			"%{Library.SDL2}",
-			"%{Library.SDL2main}"
+			"%{Library.SDL2main}",
+			"%{Library.Vulkan}"
         }
 
         filter "system:windows"
@@ -165,7 +166,8 @@ project "Shooter"
 	{
 		"Engine/src",
 		"Logger/src",
-		"Logger/third-party/spdlog/include"
+		"Logger/third-party/spdlog/include",
+		"%{IncludeDir.VulkanSDK}"
 	}
 
 	links
