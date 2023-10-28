@@ -12,6 +12,8 @@ outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
 VULKAN_SDK = os.getenv("VULKAN_SDK")
 
+ShaderCompiler = "%{VULKAN_SDK}/Bin/glslc.exe"
+
 IncludeDir = {}
 
 IncludeDir["VulkanSDK"] = "%{VULKAN_SDK}/Include"
@@ -122,8 +124,9 @@ project "Engine"
     
             postbuildcommands
             {
-				("{COPY} %{cfg.buildtarget.relpath} ../bin/" .. outputdir .. "/Shooter")
-            }
+				"{COPY} %{cfg.buildtarget.relpath} ../bin/" .. outputdir .. "/Shooter",
+				"../%{prj.name}/shaders/buildShaders.bat %{ShaderCompiler}"
+			}
     
         filter "configurations:Debug"
             defines "DEBUG"
